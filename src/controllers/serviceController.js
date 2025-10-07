@@ -20,3 +20,25 @@ exports.getServiceById = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+// CREATE a new service
+exports.createService = async (req, res) => {
+    const { name, description } = req.body;
+
+    // Basic validation
+    if (!name || !description) {
+        return res.status(400).json({ message: 'Both name and description are required.' });
+    }
+
+    const service = new Service({
+        name: name,
+        description: description
+    });
+
+    try {
+        const newService = await service.save();
+        res.status(201).json(newService); // 201 means "Created"
+    } catch (err) {
+        res.status(400).json({ message: err.message }); // 400 for bad user input
+    }
+};

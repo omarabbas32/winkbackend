@@ -1,29 +1,40 @@
 const ContactInfo = require('../models/contactInfoModel');
 
-// GET the contact info document
+// GET the single contact info document
 exports.getContactInfo = async (req, res) => {
     try {
-        // findOne() gets the first (and only) document in the collection
-        const info = await ContactInfo.findOne();
+        const info = await ContactInfo.findOne(); // findOne() gets the single document
         if (!info) {
-             // If no info exists yet, you can send a default or create one
-            return res.status(404).json({ message: 'Contact information not found.' });
+            return res.status(404).json({ message: 'Contact information has not been set up yet.' });
         }
-        res.json(info);
+        res.status(200).json(info);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-// UPDATE the contact info document
-exports.updateContactInfo = async (req, res) => {
+// CREATE or UPDATE the single contact info document
+exports.createOrUpdateContactInfo = async (req, res) => {
     try {
-        // Find the single document and update it. 
+        // findOneAndUpdate with an empty filter {} will target the single document.
+        // { upsert: true } creates the document if it doesn't exist.
         // { new: true } returns the updated version.
-        // { upsert: true } creates the document if it doesn't already exist.
-        const updatedInfo = await ContactInfo.findOneAndUpdate({}, req.body, { new: true, upsert: true });
-        res.json(updatedInfo);
+        const updatedInfo = await ContactInfo.findOneAndUpdate({}, req.body, { new: true, upsert: true, runValidators: true });
+        res.status(200).json(updatedInfo);
     } catch (err) {
         res.status(400).json({ message: err.message });
+    }
+};
+
+// DELETE the single contact info document
+exports.deleteContactInfo = async (req, res) => {
+    try {
+        const deletedInfo = await ContactInfo.findOneAndDelete({});
+        if (!deletedInfo) {
+            return res.status(404).json({ message: 'Contact information not found.' });
+        }
+        res.status(200).json({ message: 'Contact information deleted successfully.' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 };
