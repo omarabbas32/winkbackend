@@ -4,7 +4,7 @@ const {
   getAboutSections,
   createAboutSection,
   updateAboutSection
-} = require('../controllers/aboutController.js');
+} = require('../controllers/aboutusController.js');
 
 // GET route to fetch all sections for the public website
 router.get('/', getAboutSections);
