@@ -16,6 +16,10 @@ const serviceRoutes = require('./src/routes/serviceRoutes');
 const projectRoutes = require('./src/routes/projectRoutes');
 const contactInfoRoutes = require('./src/routes/contactInfoRoutes');
 const teamMemberRoutes = require('./src/routes/teamMemberRoutes'); 
+const aboutUsRoutes = require('./src/routes/aboutusRoutes.js');
+
+// --- Use About Us Routes ---
+app.use('/api/about', aboutUsRoutes);
 // --- Use Routes ---
 app.use('/images', express.static('src/images'));
 app.use('/api/services', serviceRoutes);
