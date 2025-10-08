@@ -13,12 +13,10 @@ exports.getContactInfo = async (req, res) => {
     }
 };
 
-// CREATE or UPDATE the single contact info document
+
 exports.createOrUpdateContactInfo = async (req, res) => {
     try {
-        // findOneAndUpdate with an empty filter {} will target the single document.
-        // { upsert: true } creates the document if it doesn't exist.
-        // { new: true } returns the updated version.
+        
         const updatedInfo = await ContactInfo.findOneAndUpdate({}, req.body, { new: true, upsert: true, runValidators: true });
         res.status(200).json(updatedInfo);
     } catch (err) {

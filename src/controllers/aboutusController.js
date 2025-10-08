@@ -12,9 +12,7 @@ const getAboutSections = async (req, res) => {
   }
 };
 
-// @desc    Create a new "About Us" section
-// @route   POST /api/about
-// @access  Private (should be admin-only)
+
 const createAboutSection = async (req, res) => {
   try {
     const { title, content } = req.body;
