@@ -16,23 +16,27 @@ const contactInfoRoutes = require('./src/routes/contactInfoRoutes');
 const teamMemberRoutes = require('./src/routes/teamMemberRoutes');
 const aboutUsRoutes = require('./src/routes/aboutusRoutes.js');
 
+// ✅ NEW: Import Email Routes
+const emailRoutes = require('./src/routes/emailRoutes');
+
 // --- Use Routes ---
-// Note: This line allows you to serve images directly from the backend if needed
-app.use('/images', express.static('src/images')); 
+app.use('/images', express.static('/images')); 
 app.use('/api/about', aboutUsRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/contact-info', contactInfoRoutes);
 app.use('/api/team-members', teamMemberRoutes);
 
+// ✅ NEW: Use Email API Route
+app.use('/api/email', emailRoutes);
+
 // --- Server and Database Connection ---
 const PORT = process.env.PORT || 5000;
+const MONGO_URL = process.env.MONGO_URL;
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('Connected to MongoDB successfully!');
-        // Start the server ONLY after a successful database connection
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     })
     .catch(err => {
