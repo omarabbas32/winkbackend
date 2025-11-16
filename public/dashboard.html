@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wink Dashboard - Team & Projects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            background: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .tab-btn.active {
+            background: #764ba2;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #5568d3;
+        }
+
+        .file-name {
+            margin-top: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .item-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .item-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .item-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .item-card p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .item-actions button {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h1>🚀 Wink Dashboard</h1>
+            <button onclick="logout()" class="btn btn-danger" style="width: auto; padding: 8px 20px; font-size: 14px;">Logout</button>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('team')">Team Members</button>
+            <button class="tab-btn" onclick="switchTab('projects')">Projects</button>
+        </div>
+
+        <!-- Team Members Tab -->
+        <div id="team-tab" class="tab-content active">
+            <div class="form-section">
+                <h2 id="team-form-title">Add New Team Member</h2>
+                <div id="team-message" class="message"></div>
+                <form id="team-form" onsubmit="handleTeamSubmit(event)">
+                    <input type="hidden" id="team-id" name="id">
+                    <div class="form-group">
+                        <label for="team-name">Name *</label>
+                        <input type="text" id="team-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="team-jobTitle">Job Title *</label>
+                        <input type="text" id="team-jobTitle" name="jobTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="team-image">Image *</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="team-image" name="image" accept="image/*" onchange="handleFileSelect(this, 'team-image-name')">
+                            <label for="team-image" class="file-input-label">Choose Image File</label>
+                        </div>
+                        <div id="team-image-name" class="file-name"></div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" id="team-submit-btn">Add Member</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetTeamForm()" id="team-cancel-btn" style="display: none;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="team-loading" class="loading" style="display: none;">Loading team members...</div>
+            <div id="team-items" class="items-grid"></div>
+        </div>
+
+        <!-- Projects Tab -->
+        <div id="projects-tab" class="tab-content">
+            <div class="form-section">
+                <h2 id="project-form-title">Add New Project</h2>
+                <div id="project-message" class="message"></div>
+                <form id="project-form" onsubmit="handleProjectSubmit(event)">
+                    <input type="hidden" id="project-id" name="id">
+                    <div class="form-group">
+                        <label for="project-name">Project Name *</label>
+                        <input type="text" id="project-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-brief">Brief *</label>
+                        <textarea id="project-brief" name="brief" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-solution">Solution *</label>
+                        <textarea id="project-solution" name="solution" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-results">Results *</label>
+                        <textarea id="project-results" name="results" required></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" id="project-submit-btn">Add Project</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetProjectForm()" id="project-cancel-btn" style="display: none;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="project-loading" class="loading" style="display: none;">Loading projects...</div>
+            <div id="project-items" class="items-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // Set API base URL - use localhost if opened as file://
+        const API_BASE = window.location.protocol === 'file:' 
+            ? 'http://localhost:5000' 
+            : window.location.origin;
+        
+        // Show warning if opened as file
+        if (window.location.protocol === 'file:') {
+            console.warn('⚠️ Dashboard opened as file. Please access via http://localhost:5000/dashboard.html');
+            alert('⚠️ Please access the dashboard via: http://localhost:5000/dashboard.html\n\nMake sure the server is running!');
+        }
+        
+        // Check authentication on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = 'https://winkbackend.vercel.app/login.html';
+                return;
+            }
+            // Verify token
+            verifyToken(token);
+        });
+
+        // Get auth token
+        function getAuthToken() {
+            return localStorage.getItem('authToken');
+        }
+
+        // Verify token
+        async function verifyToken(token) {
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/verify`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    // Token invalid, redirect to login
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/login.html';
+                }
+            } catch (error) {
+                console.error('Token verification error:', error);
+                localStorage.removeItem('authToken');
+                window.location.href = '/login.html';
+            }
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('authToken');
+                window.location.href = '/login.html';
+            }
+        }
+        
+        let editingTeamId = null;
+        let editingProjectId = null;
+
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            if (tab === 'team') {
+                document.getElementById('team-tab').classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                loadTeamMembers();
+            } else {
+                document.getElementById('projects-tab').classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                loadProjects();
+            }
+        }
+
+        // File input handling
+        function handleFileSelect(input, nameElementId) {
+            const fileName = input.files[0]?.name || '';
+            document.getElementById(nameElementId).textContent = fileName || 'No file selected';
+        }
+
+        // Team Members Functions
+        async function loadTeamMembers() {
+            const container = document.getElementById('team-items');
+            const loading = document.getElementById('team-loading');
+            container.innerHTML = '';
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/team-members`, {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                const members = await response.json();
+                loading.style.display = 'none';
+
+                if (members.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><h3>No team members yet</h3><p>Add your first team member above!</p></div>';
+                    return;
+                }
+
+                members.forEach(member => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.innerHTML = `
+                        <img src="${member.imagePath}" alt="${member.name}" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                        <h3>${member.name}</h3>
+                        <p><strong>Role:</strong> ${member.jobTitle}</p>
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="editTeamMember('${member._id}')">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteTeamMember('${member._id}')">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                loading.style.display = 'none';
+                showMessage('team-message', 'Error loading team members', 'error');
+            }
+        }
+
+        async function handleTeamSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const id = editingTeamId;
+
+            try {
+                let response;
+                if (id) {
+                    // Update
+                    const data = {
+                        name: formData.get('name'),
+                        jobTitle: formData.get('jobTitle')
+                    };
+                    if (formData.get('image') && formData.get('image').size > 0) {
+                        const updateFormData = new FormData();
+                        updateFormData.append('name', data.name);
+                        updateFormData.append('jobTitle', data.jobTitle);
+                        updateFormData.append('image', formData.get('image'));
+                        response = await fetch(`${API_BASE}/api/team-members/${id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${getAuthToken()}`
+                            },
+                            body: updateFormData
+                        });
+                    } else {
+                        response = await fetch(`${API_BASE}/api/team-members/${id}`, {
+                            method: 'PUT',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${getAuthToken()}`
+                            },
+                            body: JSON.stringify(data)
+                        });
+                    }
+                } else {
+                    // Create
+                    response = await fetch(`${API_BASE}/api/team-members`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        },
+                        body: formData
+                    });
+                }
+
+                const result = await response.json();
+                if (response.ok) {
+                    showMessage('team-message', id ? 'Team member updated successfully!' : 'Team member added successfully!', 'success');
+                    resetTeamForm();
+                    loadTeamMembers();
+                } else {
+                    showMessage('team-message', result.message || 'Error saving team member', 'error');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                showMessage('team-message', 'Error saving team member: ' + error.message, 'error');
+            }
+        }
+
+        async function editTeamMember(id) {
+            try {
+                const response = await fetch(`${API_BASE}/api/team-members/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                const member = await response.json();
+                
+                document.getElementById('team-id').value = member._id;
+                document.getElementById('team-name').value = member.name;
+                document.getElementById('team-jobTitle').value = member.jobTitle;
+                document.getElementById('team-image').required = false;
+                document.getElementById('team-submit-btn').textContent = 'Update Member';
+                document.getElementById('team-cancel-btn').style.display = 'block';
+                document.getElementById('team-form-title').textContent = 'Edit Team Member';
+                document.getElementById('team-image-name').textContent = 'Current image (upload new to replace)';
+                
+                editingTeamId = id;
+            } catch (error) {
+                showMessage('team-message', 'Error loading team member', 'error');
+            }
+        }
+
+        async function deleteTeamMember(id) {
+            if (!confirm('Are you sure you want to delete this team member?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/team-members/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+
+                if (response.ok) {
+                    showMessage('team-message', 'Team member deleted successfully!', 'success');
+                    loadTeamMembers();
+                } else {
+                    const errorData = await response.json().catch(() => ({ message: 'Error deleting team member' }));
+                    showMessage('team-message', errorData.message || 'Error deleting team member', 'error');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                showMessage('team-message', 'Error deleting team member: ' + error.message, 'error');
+            }
+        }
+
+        function resetTeamForm() {
+            document.getElementById('team-form').reset();
+            document.getElementById('team-id').value = '';
+            document.getElementById('team-image').required = true;
+            document.getElementById('team-submit-btn').textContent = 'Add Member';
+            document.getElementById('team-cancel-btn').style.display = 'none';
+            document.getElementById('team-form-title').textContent = 'Add New Team Member';
+            document.getElementById('team-image-name').textContent = '';
+            editingTeamId = null;
+        }
+
+        // Projects Functions
+        async function loadProjects() {
+            const container = document.getElementById('project-items');
+            const loading = document.getElementById('project-loading');
+            container.innerHTML = '';
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/projects`, {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                const projects = await response.json();
+                loading.style.display = 'none';
+
+                if (projects.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><h3>No projects yet</h3><p>Add your first project above!</p></div>';
+                    return;
+                }
+
+                projects.forEach(project => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.innerHTML = `
+                        <h3>${project.name}</h3>
+                        <p><strong>Brief:</strong> ${project.brief.substring(0, 100)}${project.brief.length > 100 ? '...' : ''}</p>
+                        <p><strong>Solution:</strong> ${project.solution.substring(0, 100)}${project.solution.length > 100 ? '...' : ''}</p>
+                        <p><strong>Results:</strong> ${project.results.substring(0, 100)}${project.results.length > 100 ? '...' : ''}</p>
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="editProject('${project._id}')">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteProject('${project._id}')">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                loading.style.display = 'none';
+                showMessage('project-message', 'Error loading projects', 'error');
+            }
+        }
+
+        async function handleProjectSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const id = editingProjectId;
+            const data = {
+                name: formData.get('name'),
+                brief: formData.get('brief'),
+                solution: formData.get('solution'),
+                results: formData.get('results')
+            };
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/api/projects${id ? `/${id}` : ''}`,
+                    {
+                        method: id ? 'PUT' : 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        },
+                        body: JSON.stringify(data)
+                    }
+                );
+
+                const result = await response.json();
+                if (response.ok) {
+                    showMessage('project-message', id ? 'Project updated successfully!' : 'Project added successfully!', 'success');
+                    resetProjectForm();
+                    loadProjects();
+                } else {
+                    showMessage('project-message', result.message || 'Error saving project', 'error');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                showMessage('project-message', 'Error saving project: ' + error.message, 'error');
+            }
+        }
+
+        async function editProject(id) {
+            try {
+                const response = await fetch(`${API_BASE}/api/projects/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                const project = await response.json();
+                
+                document.getElementById('project-id').value = project._id;
+                document.getElementById('project-name').value = project.name;
+                document.getElementById('project-brief').value = project.brief;
+                document.getElementById('project-solution').value = project.solution;
+                document.getElementById('project-results').value = project.results;
+                document.getElementById('project-submit-btn').textContent = 'Update Project';
+                document.getElementById('project-cancel-btn').style.display = 'block';
+                document.getElementById('project-form-title').textContent = 'Edit Project';
+                
+                editingProjectId = id;
+            } catch (error) {
+                showMessage('project-message', 'Error loading project', 'error');
+            }
+        }
+
+        async function deleteProject(id) {
+            if (!confirm('Are you sure you want to delete this project?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/projects/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+
+                if (response.ok) {
+                    showMessage('project-message', 'Project deleted successfully!', 'success');
+                    loadProjects();
+                } else {
+                    const errorData = await response.json().catch(() => ({ message: 'Error deleting project' }));
+                    showMessage('project-message', errorData.message || 'Error deleting project', 'error');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                showMessage('project-message', 'Error deleting project: ' + error.message, 'error');
+            }
+        }
+
+        function resetProjectForm() {
+            document.getElementById('project-form').reset();
+            document.getElementById('project-id').value = '';
+            document.getElementById('project-submit-btn').textContent = 'Add Project';
+            document.getElementById('project-cancel-btn').style.display = 'none';
+            document.getElementById('project-form-title').textContent = 'Add New Project';
+            editingProjectId = null;
+        }
+
+        // Utility function
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `message ${type} show`;
+            setTimeout(() => {
+                element.classList.remove('show');
+            }, 5000);
+        }
+
+        // Load initial data
+        loadTeamMembers();
+    </script>
+</body>
+</html>
+
